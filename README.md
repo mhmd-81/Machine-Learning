@@ -17,4 +17,11 @@ Outlier Detection: Discover a streamlined method to identify and analyze outlier
 
 Feel free to explore the provided notebooks and code snippets to enhance your understanding of machine learning fundamentals. Contributions and feedback are always welcome!
 
+
+# datasets folder
+there is a folder called datasets  if you open  it up you an see some datasets for trainin g that I've gathered for you to use. Ive to say that files are in .CSV format because its easier to use and the moste commen format in ML community.
+
+# codes folder
+there is also a folder called codes so  you can find the codes of the datasets folder in it but sometimes maybe there will be files that are not related to the datasets folder for thoes I'll guid you how to use that.
+
 Happy learning! 🚀
