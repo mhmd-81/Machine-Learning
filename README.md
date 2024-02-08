@@ -24,4 +24,6 @@ there is a folder called datasets  if you open  it up you an see some datasets f
 # codes folder
 there is also a folder called codes so  you can find the codes of the datasets folder in it but sometimes maybe there will be files that are not related to the datasets folder for thoes I'll guid you how to use that.
 
+# articles folder
+there is also a folder called articles that I've tried to teach some basics and useful methods of ML. feel free to use them and upgrade yourself.
 Happy learning! 🚀
