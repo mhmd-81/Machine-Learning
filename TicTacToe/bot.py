@@ -1,7 +1,8 @@
 import telebot
 import telebot.apihelper
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-import random
+import pickle
+from teacher import ValuePolicy
 
 # Your bot token
 TOKEN = '8109938861:AAFKL0m1VLW5f5j6URcCDiLLXpcoZRX9MUA'
@@ -63,46 +64,9 @@ class Game:
                 return state[2]
         return NO_PLAYER
 
-def reward(game):
-    return max(game.get_winner(), 0)
-
-class ValuePolicy:
-    DEFAULT_VALUE = 0.5
-
-    def __init__(self):
-        self.values = {}
-
-    def policy(self, game):
-        move_values = {}
-        moves = game.valid_moves()
-        for move in moves:
-            next = game.make_move(move, AGENT)
-            move_values[move] = self.get_state_value(next)
-        return max(move_values, key=move_values.get)
-
-    def get_state_value(self, state):
-        if str(state) not in self.values:
-            return self.DEFAULT_VALUE
-        return self.values[str(state)]
-
-    def set_state_value(self, state, value):
-        self.values[str(state)] = value
-
-    def learn(self, states):
-        def temporal_difference(current_state_value, next_state_value):
-            learning_rate = 0.1
-            return current_state_value + learning_rate * (next_state_value - current_state_value)
-
-        last_state = states[-1:][0]
-        last_value = reward(last_state)
-        self.set_state_value(last_state, last_value)
-        for state in reversed(states[:-1]):
-            value = self.get_state_value(state)
-            last_value = temporal_difference(value, last_value)
-            self.set_state_value(state, last_value)
-
-# Initialize the RL policy
-policy = ValuePolicy()
+# Load the pre-trained policy
+with open("trained_policy.pkl", "rb") as f:
+    policy = pickle.load(f)
 
 # Game state variables
 games = {}  # Store game states for each chat
