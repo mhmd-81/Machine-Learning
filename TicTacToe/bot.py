@@ -1,6 +1,7 @@
 import telebot
 import telebot.apihelper
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+import random
 
 # Your bot token
 TOKEN = '8109938861:AAFKL0m1VLW5f5j6URcCDiLLXpcoZRX9MUA'
@@ -17,62 +18,162 @@ telebot.apihelper.proxy = {
 # Initialize the bot with the provided token
 bot = telebot.TeleBot(TOKEN)
 
-# Game state variables
-board = [" "] * 9  # 3x3 Tic-Tac-Toe grid (empty at start)
-player_turn = "X"  # Player X starts
+# RL Game Logic
+AGENT = 1
+OPPONENT = -1
+NO_PLAYER = 0
 
+class Game:
+    def __init__(self, game_state=None):
+        if game_state is None:
+            game_state = [
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0
+            ]
+        self.state = game_state
+
+    def __str__(self):
+        return str(self.state)
+
+    def is_draw(self):
+        return len([field for field in self.state if field == NO_PLAYER]) == 0
+
+    def is_finished(self):
+        return self.get_winner() != NO_PLAYER or self.is_draw()
+
+    def valid_moves(self):
+        return [i for i in range(9) if self.state[i] == NO_PLAYER]
+
+    def make_move(self, field, player):
+        next = list(self.state)
+        next[field] = player
+        return Game(next)
+
+    def get_winner(self):
+        state = self.state
+        for i in range(3):
+            if state[i * 3] == state[i * 3 + 1] == state[i * 3 + 2] == state[i * 3] != NO_PLAYER:
+                return state[i * 3]
+            if state[i] == state[i + 3] == state[i + 6] == state[i] != NO_PLAYER:
+                return state[i]
+            if state[0] == state[4] == state[8] == state[0] != NO_PLAYER:
+                return state[0]
+            if state[2] == state[4] == state[6] == state[2] != NO_PLAYER:
+                return state[2]
+        return NO_PLAYER
+
+def reward(game):
+    return max(game.get_winner(), 0)
+
+class ValuePolicy:
+    DEFAULT_VALUE = 0.5
+
+    def __init__(self):
+        self.values = {}
+
+    def policy(self, game):
+        move_values = {}
+        moves = game.valid_moves()
+        for move in moves:
+            next = game.make_move(move, AGENT)
+            move_values[move] = self.get_state_value(next)
+        return max(move_values, key=move_values.get)
+
+    def get_state_value(self, state):
+        if str(state) not in self.values:
+            return self.DEFAULT_VALUE
+        return self.values[str(state)]
+
+    def set_state_value(self, state, value):
+        self.values[str(state)] = value
+
+    def learn(self, states):
+        def temporal_difference(current_state_value, next_state_value):
+            learning_rate = 0.1
+            return current_state_value + learning_rate * (next_state_value - current_state_value)
+
+        last_state = states[-1:][0]
+        last_value = reward(last_state)
+        self.set_state_value(last_state, last_value)
+        for state in reversed(states[:-1]):
+            value = self.get_state_value(state)
+            last_value = temporal_difference(value, last_value)
+            self.set_state_value(state, last_value)
+
+# Initialize the RL policy
+policy = ValuePolicy()
+
+# Game state variables
+games = {}  # Store game states for each chat
 
 # Function to create the board with buttons
-def create_board_markup():
+def create_board_markup(game):
     markup = InlineKeyboardMarkup(row_width=3)
     buttons = []
 
     for i in range(9):
-        button = InlineKeyboardButton(board[i], callback_data=str(i))  # Use the index as callback data
+        cell = " "
+        if game.state[i] == AGENT:
+            cell = "X"
+        elif game.state[i] == OPPONENT:
+            cell = "O"
+        button = InlineKeyboardButton(cell, callback_data=str(i))
         buttons.append(button)
 
     markup.add(*buttons)
     return markup
 
-
 # Function to handle the callback when a player clicks a button
 @bot.callback_query_handler(func=lambda call: True)
 def handle_move(call):
-    global player_turn
+    chat_id = call.message.chat.id
+    if chat_id not in games:
+        bot.answer_callback_query(call.id, "No active game!")
+        return
 
-    # Get the position (index) of the button clicked
+    game = games[chat_id]
     position = int(call.data)
 
-    # If the cell is already filled, inform the user and return
-    if board[position] != " ":
+    if game.state[position] != NO_PLAYER:
         bot.answer_callback_query(call.id, "Cell already occupied!")
         return
 
-    # Update the board with the player's move
-    board[position] = player_turn
+    # Player makes a move
+    game = game.make_move(position, OPPONENT)
+    games[chat_id] = game
 
-    # Send an updated board
-    bot.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.message_id,
-        text=f"Player {player_turn}'s turn\n\n" ,
-        reply_markup=create_board_markup()
-    )
+    if game.is_finished():
+        winner = game.get_winner()
+        if winner == OPPONENT:
+            bot.edit_message_text(chat_id=chat_id, message_id=call.message.message_id, text="You win!", reply_markup=create_board_markup(game))
+        elif winner == NO_PLAYER:
+            bot.edit_message_text(chat_id=chat_id, message_id=call.message.message_id, text="It's a draw!", reply_markup=create_board_markup(game))
+        del games[chat_id]
+        return
 
-    # Switch to the next player's turn
-    player_turn = "O" if player_turn == "X" else "X"
+    # Agent makes a move
+    agent_move = policy.policy(game)
+    game = game.make_move(agent_move, AGENT)
+    games[chat_id] = game
 
+    if game.is_finished():
+        winner = game.get_winner()
+        if winner == AGENT:
+            bot.edit_message_text(chat_id=chat_id, message_id=call.message.message_id, text="I win!", reply_markup=create_board_markup(game))
+        elif winner == NO_PLAYER:
+            bot.edit_message_text(chat_id=chat_id, message_id=call.message.message_id, text="It's a draw!", reply_markup=create_board_markup(game))
+        del games[chat_id]
+        return
 
+    bot.edit_message_text(chat_id=chat_id, message_id=call.message.message_id, text="Your turn!", reply_markup=create_board_markup(game))
 
 # Handler for the /start command
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(
-        message.chat.id,
-        f"Welcome to Tic-Tac-Toe!\n\nPlayer {player_turn}'s turn\n\n" ,
-        reply_markup=create_board_markup()
-    )
-
+    chat_id = message.chat.id
+    games[chat_id] = Game()
+    bot.send_message(chat_id, "Welcome to Tic-Tac-Toe! You are O, I am X. Your turn!", reply_markup=create_board_markup(games[chat_id]))
 
 # Start the bot
 bot.polling()
