@@ -48,7 +48,7 @@ class Game:
         return NO_PLAYER
 
 class ValuePolicy:
-    DEFAULT_VALUE = 0.5
+    DEFAULT_VALUE = 0.1
 
     def __init__(self):
         self.values = {}
