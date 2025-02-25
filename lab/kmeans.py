@@ -48,22 +48,22 @@ class data_processing(object):
             logging.error("Data is not loaded.")
             raise ValueError("Data is not loaded.")
 
-    # def perform_kmeans(self, n_clusters=3):
-    #     if self.data is not None:
-    #         try:
-    #             if len(self.numeric_columns) == 0:
-    #                 raise ValueError("There are no numeric columns for clustering.")
-    #
-    #             # Perform KMeans clustering on the numeric columns
-    #             kmeans = KMeans(n_clusters=n_clusters)
-    #             kmeans.fit(self.data[self.numeric_columns])
-    #             logging.info(f"KMeans clustering performed with {n_clusters} clusters")
-    #             return kmeans
-    #         except Exception as e:
-    #             logging.error(f"An error occurred while performing KMeans: {e}")
-    #             raise Exception(f"An error occurred while performing KMeans: {e}")
-    #     else:
-    #         raise ValueError("Data is not loaded.")
+    def perform_kmeans(self, n_clusters=3):
+        if self.data is not None:
+            try:
+                if len(self.numeric_columns) == 0:
+                    raise ValueError("There are no numeric columns for clustering.")
+
+                # Perform KMeans clustering on the numeric columns
+                kmeans = KMeans(n_clusters=n_clusters)
+                kmeans.fit(self.data[self.numeric_columns])
+                logging.info(f"KMeans clustering performed with {n_clusters} clusters")
+                return kmeans
+            except Exception as e:
+                logging.error(f"An error occurred while performing KMeans: {e}")
+                raise Exception(f"An error occurred while performing KMeans: {e}")
+        else:
+            raise ValueError("Data is not loaded.")
 
 
 # Example usage
