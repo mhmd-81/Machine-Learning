@@ -1,8 +1,96 @@
-2025-02-25 19:43:49,149 - INFO - Data loaded successfully from train.csv
-2025-02-25 19:43:49,167 - INFO - Numeric columns: ['ID', 'Customer_ID', 'Month', 'Age', 'SSN', 'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan', 'Delay_from_due_date', 'Num_of_Delayed_Payment', 'Changed_Credit_Limit', 'Num_Credit_Inquiries', 'Outstanding_Debt', 'Credit_Utilization_Ratio', 'Credit_History_Age', 'Total_EMI_per_month', 'Amount_invested_monthly', 'Monthly_Balance']
-2025-02-25 19:43:49,167 - INFO - Categorical columns: ['Name', 'Occupation', 'Type_of_Loan', 'Credit_Mix', 'Payment_of_Min_Amount', 'Payment_Behaviour', 'Credit_Score']
-2025-02-25 19:43:49,424 - INFO - KMeans clustering performed with 3 clusters
-2025-02-25 20:01:11,810 - INFO - Data loaded successfully from train.csv
-2025-02-25 20:01:11,819 - INFO - Numeric columns: ['ID', 'Customer_ID', 'Month', 'Age', 'SSN', 'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan', 'Delay_from_due_date', 'Num_of_Delayed_Payment', 'Changed_Credit_Limit', 'Num_Credit_Inquiries', 'Outstanding_Debt', 'Credit_Utilization_Ratio', 'Credit_History_Age', 'Total_EMI_per_month', 'Amount_invested_monthly', 'Monthly_Balance']
-2025-02-25 20:01:11,820 - INFO - Categorical columns: ['Name', 'Occupation', 'Type_of_Loan', 'Credit_Mix', 'Payment_of_Min_Amount', 'Payment_Behaviour', 'Credit_Score']
-2025-02-25 20:01:12,050 - INFO - KMeans clustering performed with 3 clusters
+2025-02-26 13:56:11,982 - INFO - Data loaded successfully from train.csv
+2025-02-26 13:56:11,990 - INFO - Numeric columns: ['ID', 'Customer_ID', 'Month', 'Age', 'SSN', 'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan', 'Delay_from_due_date', 'Num_of_Delayed_Payment', 'Changed_Credit_Limit', 'Num_Credit_Inquiries', 'Outstanding_Debt', 'Credit_Utilization_Ratio', 'Credit_History_Age', 'Total_EMI_per_month', 'Amount_invested_monthly', 'Monthly_Balance']
+2025-02-26 13:56:11,990 - INFO - Categorical columns: ['Name', 'Occupation', 'Type_of_Loan', 'Credit_Mix', 'Payment_of_Min_Amount', 'Payment_Behaviour', 'Credit_Score']
+2025-02-26 13:56:12,016 - INFO - Column Name has been imputed and label encoded.
+2025-02-26 13:56:12,016 - INFO - 0          11
+1          11
+2          11
+3          11
+4          11
+         ... 
+99995    6508
+99996    6508
+99997    6508
+99998    6508
+99999    6508
+Name: Name, Length: 100000, dtype: int64
+2025-02-26 13:56:12,028 - INFO - Column Occupation has been imputed and label encoded.
+2025-02-26 13:56:12,028 - INFO - 0        12
+1        12
+2        12
+3        12
+4        12
+         ..
+99995     9
+99996     9
+99997     9
+99998     9
+99999     9
+Name: Occupation, Length: 100000, dtype: int64
+2025-02-26 13:56:12,047 - INFO - Column Type_of_Loan has been imputed and label encoded.
+2025-02-26 13:56:12,047 - INFO - 0        128
+1        128
+2        128
+3        128
+4        128
+        ... 
+99995    683
+99996    683
+99997    683
+99998    683
+99999    683
+Name: Type_of_Loan, Length: 100000, dtype: int64
+2025-02-26 13:56:12,057 - INFO - Column Credit_Mix has been imputed and label encoded.
+2025-02-26 13:56:12,057 - INFO - 0        1
+1        1
+2        1
+3        1
+4        1
+        ..
+99995    1
+99996    1
+99997    1
+99998    1
+99999    1
+Name: Credit_Mix, Length: 100000, dtype: int64
+2025-02-26 13:56:12,068 - INFO - Column Payment_of_Min_Amount has been imputed and label encoded.
+2025-02-26 13:56:12,068 - INFO - 0        1
+1        1
+2        1
+3        1
+4        1
+        ..
+99995    1
+99996    1
+99997    1
+99998    1
+99999    1
+Name: Payment_of_Min_Amount, Length: 100000, dtype: int64
+2025-02-26 13:56:12,083 - INFO - Column Payment_Behaviour has been imputed and label encoded.
+2025-02-26 13:56:12,083 - INFO - 0        2
+1        3
+2        4
+3        5
+4        1
+        ..
+99995    0
+99996    1
+99997    0
+99998    3
+99999    1
+Name: Payment_Behaviour, Length: 100000, dtype: int64
+2025-02-26 13:56:12,097 - INFO - Column Credit_Score has been imputed and label encoded.
+2025-02-26 13:56:12,098 - INFO - 0        0
+1        0
+2        0
+3        0
+4        0
+        ..
+99995    1
+99996    1
+99997    1
+99998    2
+99999    1
+Name: Credit_Score, Length: 100000, dtype: int64
+2025-02-26 13:56:12,098 - INFO - Using columns for KMeans clustering: ['ID', 'Customer_ID', 'Month', 'Age', 'SSN', 'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan', 'Delay_from_due_date', 'Num_of_Delayed_Payment', 'Changed_Credit_Limit', 'Num_Credit_Inquiries', 'Outstanding_Debt', 'Credit_Utilization_Ratio', 'Credit_History_Age', 'Total_EMI_per_month', 'Amount_invested_monthly', 'Monthly_Balance']
+2025-02-26 13:56:12,269 - INFO - KMeans clustering performed with 3 clusters

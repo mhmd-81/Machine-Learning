@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+from sklearn.preprocessing import LabelEncoder
 from sklearn.cluster import KMeans
 
 logging.basicConfig(filename='app_log.txt',
@@ -48,11 +49,31 @@ class data_processing(object):
             logging.error("Data is not loaded.")
             raise ValueError("Data is not loaded.")
 
+    def cat_to_num(self):
+        if self.data is not None:
+            if self.categorical_columns:
+                label_encoder = LabelEncoder()  # For encoding categorical values as numeric
+
+                for col in self.categorical_columns:
+
+                    self.data[col] = label_encoder.fit_transform(self.data[col])
+
+                    logging.info(f"Column {col} has been imputed and label encoded.")
+                    logging.info(data[col])
+            else:
+                logging.info("No categorical columns to process.")
+        else:
+            logging.error("Data is not loaded.")
+            raise ValueError("Data is not loaded.")
+
     def perform_kmeans(self, n_clusters=3):
         if self.data is not None:
             try:
                 if len(self.numeric_columns) == 0:
                     raise ValueError("There are no numeric columns for clustering.")
+
+                # Log the columns used for KMeans
+                logging.info(f"Using columns for KMeans clustering: {self.numeric_columns}")
 
                 # Perform KMeans clustering on the numeric columns
                 kmeans = KMeans(n_clusters=n_clusters)
@@ -81,6 +102,10 @@ if __name__ == "__main__":
 
         # Check column types (numeric or categorical)
         data_processor.check_column_types()
+
+        # Convert categorical columns to numerical values
+        data_processor.cat_to_num()
+        print("Categorical columns have been processed.")
 
         # Perform some data processing (e.g., KMeans clustering on numeric columns)
         kmeans_model = data_processor.perform_kmeans(n_clusters=3)
